@@ -15,7 +15,7 @@ centre = (width//2,height//2)
 show_axes = False
 
 #Gravitational constant
-g = 0.00002
+g = 0.0002
 #Ship object
 
 class Ship:
@@ -28,9 +28,8 @@ print('pos: ', Ship.position)
 print('mass: ', Ship.mass)
 print('velocity: ', Ship.velocity)
 
-#TODO Broken?
 def from_centre(x,y):
-    return (centre[0]+x,centre[1]-y)
+    return (centre[0]-x,centre[1]-y)
 
 def render():
     screen.fill((0, 0, 0))
