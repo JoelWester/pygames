@@ -47,11 +47,14 @@ def render():
         pygame.draw.circle(screen, (91, 226, 87), planet.position, 20)
     pygame.draw.circle(screen, (91, 226, 87), ship.position, 20)
 
+#Is the mouse pressed down?
+mouseDown = False
 
 while True:
     counter += 1
-    #Keyboard Input
+    #Input
     for event in pygame.event.get():
+        #Keyboard
         if event.type == pygame.QUIT or pygame.key.get_pressed()[pygame.K_q]:
             pygame.quit()
         if pygame.key.get_pressed()[pygame.K_a]:
@@ -62,6 +65,18 @@ while True:
             ship.velocity = (ship.velocity[0]+0.2, ship.velocity[1])
         if pygame.key.get_pressed()[pygame.K_s]:
             ship.velocity = (ship.velocity[0], ship.velocity[1]+0.2)
+        #Mouse
+        if event.type == pygame.MOUSEBUTTONUP:
+            mouseDown = False
+        if event.type == pygame.MOUSEBUTTONDOWN or mouseDown:
+            print("\nMouse Down\n")
+            if not mouseDown:
+                mouseDown = True
+            mousePos = pygame.mouse.get_pos()
+            vector = ship.position[0]-mousePos[0], ship.position[1]-mousePos[1]
+            magnitude = math.sqrt(vector[0]*vector[0]+vector[1]*vector[1])
+            unitVector = vector[0]//magnitude, vector[1]//magnitude
+            ship.velocity = ship.velocity[0]-unitVector[0]*0.2, ship.velocity[1]-unitVector[1]*0.2
     #Ship updates
     distance = from_centre(ship.position[0], ship.position[1])
     print('distance: ', distance)
