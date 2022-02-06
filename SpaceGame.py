@@ -1,5 +1,6 @@
 import pygame
 import math
+import random
 import os
 from datetime import datetime
 
@@ -21,16 +22,18 @@ g = 0.0001
 class Body:
     mass = 0.5
     velocity = (0.0, 0.0)
-    def __init__(self, type, position):
+    def __init__(self, type, position, color):
         self.type = type
         self.position = position
+        self.color = color
 
 #Ship
-ship = Body("ship", (50.0, 50.0))
+ship = Body("ship", (50.0, 50.0), (91, 226, 87))
 
 #Planets
-a = Body("planet", (centre[0]//2, centre[1]//2))
-planets = {a}
+a = Body("planet", (centre[0]//2, centre[1]), (random.randint(1,254), random.randint(1,254), random.randint(1,254)))
+b = Body("planet", (centre[0], centre[1]//1.5), (random.randint(1,254), random.randint(1,254), random.randint(1,254)))
+planets = {a,b}
 
 print('Ship details:')
 print('pos: ', ship.position)
@@ -44,8 +47,8 @@ def render():
 
     pygame.draw.circle(screen, (255, 110, 0), centre, 65)
     for planet in planets:
-        pygame.draw.circle(screen, (91, 226, 87), planet.position, 20)
-    pygame.draw.circle(screen, (91, 226, 87), ship.position, 20)
+        pygame.draw.circle(screen, planet.color, planet.position, 20)
+    pygame.draw.circle(screen, ship.color, ship.position, 20)
 
 #Is the mouse pressed down?
 mouseDown = False
