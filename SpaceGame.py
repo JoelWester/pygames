@@ -13,7 +13,11 @@ height = screen.get_height()
 fps = pygame.time.Clock()
 counter = 0
 centre = (width//2,height//2)
-show_axes = False
+show_axes = True
+sysfont = pygame.font.get_default_font()
+font = pygame.font.SysFont(None, 24)
+
+text = 'FUEL'
 
 #Gravitational constant
 g = 0.0001
@@ -27,8 +31,17 @@ class Body:
         self.position = position
         self.color = color
 
+class Ship:
+    mass = 0.5
+    velocity = (0.0, 0.0)
+    fuel = 200.0
+    def __init__(self, type, position, color):
+        self.type = type
+        self.position = position
+        self.color = color
+
 #Ship
-ship = Body("ship", (50.0, 50.0), (91, 226, 87))
+ship = Ship("ship", (50.0, 50.0), (91, 226, 87))
 
 #Planets
 a = Body("planet", (centre[0]//2, centre[1]), (random.randint(1,254), random.randint(1,254), random.randint(1,254)))
@@ -50,6 +63,12 @@ def render():
         pygame.draw.circle(screen, planet.color, planet.position, 20)
     pygame.draw.circle(screen, ship.color, ship.position, 20)
 
+    #Fuel
+    #Draw text
+    img = font.render(text, True, (255, 0, 0))
+    screen.blit(img, (centre[0]*0.02,centre[1]*1.8))
+    pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(centre[0]*0.08, centre[1]*1.8, ship.fuel, 24))
+
 #Is the mouse pressed down?
 mouseDown = False
 
@@ -60,18 +79,22 @@ while True:
         #Keyboard
         if event.type == pygame.QUIT or pygame.key.get_pressed()[pygame.K_q]:
             pygame.quit()
-        if pygame.key.get_pressed()[pygame.K_a]:
+        if pygame.key.get_pressed()[pygame.K_a] and ship.fuel > 0:
             ship.velocity = (ship.velocity[0]-0.2, ship.velocity[1])
-        if pygame.key.get_pressed()[pygame.K_w]:
+            ship.fuel -= 0.1
+        if pygame.key.get_pressed()[pygame.K_w] and ship.fuel > 0:
             ship.velocity = (ship.velocity[0], ship.velocity[1]-0.2)
-        if pygame.key.get_pressed()[pygame.K_d]:
+            ship.fuel -= 0.1
+        if pygame.key.get_pressed()[pygame.K_d] and ship.fuel > 0:
             ship.velocity = (ship.velocity[0]+0.2, ship.velocity[1])
-        if pygame.key.get_pressed()[pygame.K_s]:
+            ship.fuel -= 0.1
+        if pygame.key.get_pressed()[pygame.K_s] and ship.fuel > 0:
             ship.velocity = (ship.velocity[0], ship.velocity[1]+0.2)
+            ship.fuel -= 0.1
         #Mouse
         if event.type == pygame.MOUSEBUTTONUP:
             mouseDown = False
-        if event.type == pygame.MOUSEBUTTONDOWN or mouseDown:
+        if (event.type == pygame.MOUSEBUTTONDOWN and ship.fuel > 0) or mouseDown and ship.fuel > 0:
             print("\nMouse Down\n")
             if not mouseDown:
                 mouseDown = True
@@ -80,6 +103,7 @@ while True:
             magnitude = math.sqrt(vector[0]*vector[0]+vector[1]*vector[1])
             unitVector = vector[0]//magnitude, vector[1]//magnitude
             ship.velocity = ship.velocity[0]-unitVector[0]*0.2, ship.velocity[1]-unitVector[1]*0.2
+            ship.fuel -= 0.1
     #Ship updates
     distance = from_centre(ship.position[0], ship.position[1])
     print('distance: ', distance)
@@ -93,6 +117,8 @@ while True:
         gravity = (g*distance[0], g*distance[1])
         planet.velocity = (planet.velocity[0] + gravity[0], planet.velocity[1] + gravity[1])
         planet.position = (planet.position[0] + planet.velocity[0], planet.position[1] + planet.velocity[1])
+
     render()
+    
     pygame.display.update()
     fps.tick(60)
