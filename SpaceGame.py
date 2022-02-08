@@ -17,24 +17,23 @@ show_axes = True
 sysfont = pygame.font.get_default_font()
 font = pygame.font.SysFont(None, 24)
 
-text = 'FUEL'
-
 #Gravitational constant
 g = 0.0001
 #Body object
 
 class Body:
     mass = 0.5
-    velocity = (0.0, 0.0)
-    def __init__(self, type, position, color):
+    def __init__(self, type, position, color, velocity):
         self.type = type
         self.position = position
         self.color = color
+        self.velocity = velocity
 
 class Ship:
     mass = 0.5
     velocity = (0.0, 0.0)
     fuel = 200.0
+    hp = 100.0
     def __init__(self, type, position, color):
         self.type = type
         self.position = position
@@ -44,8 +43,8 @@ class Ship:
 ship = Ship("ship", (50.0, 50.0), (91, 226, 87))
 
 #Planets
-a = Body("planet", (centre[0]//2, centre[1]), (random.randint(1,254), random.randint(1,254), random.randint(1,254)))
-b = Body("planet", (centre[0], centre[1]//1.5), (random.randint(1,254), random.randint(1,254), random.randint(1,254)))
+a = Body("planet", (centre[0]//2, centre[1]), (random.randint(1,254), random.randint(1,254), random.randint(1,254)), (0.2,-0.2))
+b = Body("planet", (centre[0], centre[1]//1.5), (random.randint(1,254), random.randint(1,254), random.randint(1,254)), (0.2,-0.2))
 planets = {a,b}
 
 print('Ship details:')
@@ -65,9 +64,14 @@ def render():
 
     #Fuel
     #Draw text
-    img = font.render(text, True, (255, 0, 0))
+    img = font.render('FUEL', True, (255, 0, 0))
     screen.blit(img, (centre[0]*0.02,centre[1]*1.8))
-    pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(centre[0]*0.08, centre[1]*1.8, ship.fuel, 24))
+    pygame.draw.rect(screen, (255, 255, 0), pygame.Rect(centre[0]*0.1, centre[1]*1.8, ship.fuel//2, 24))
+    #Health
+    #Draw text
+    img = font.render('HEALTH', True, (0, 255, 0))
+    screen.blit(img, (centre[0]*0.02,centre[1]*1.6))
+    pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(centre[0]*0.1, centre[1]*1.6, ship.hp, 24))
 
 #Is the mouse pressed down?
 mouseDown = False
