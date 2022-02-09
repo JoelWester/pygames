@@ -12,7 +12,7 @@ width = screen.get_width()
 height = screen.get_height()
 fps = pygame.time.Clock()
 counter = 0
-centre = (width//2,height//2)
+centre = (width/2,height/2)
 show_axes = True
 sysfont = pygame.font.get_default_font()
 font = pygame.font.SysFont(None, 24)
@@ -31,7 +31,7 @@ class Body:
 
 class Ship:
     mass = 0.5
-    velocity = (0.0, 0.0)
+    velocity = (1.0, 1.0)
     fuel = 200.0
     hp = 100.0
     def __init__(self, type, position, color):
@@ -40,27 +40,39 @@ class Ship:
         self.color = color
 
 #Ship
-ship = Ship("ship", (50.0, 50.0), (91, 226, 87))
+ship = Ship("ship", (50.0, 50.0), (255, 255, 255))
 
 #Planets
-a = Body("planet", (centre[0]//2, centre[1]), (random.randint(1,254), random.randint(1,254), random.randint(1,254)), (0.2,-0.2))
-b = Body("planet", (centre[0], centre[1]//1.5), (random.randint(1,254), random.randint(1,254), random.randint(1,254)), (0.2,-0.2))
+a = Body("planet", (centre[0]/2, centre[1]), (random.randint(1,254), random.randint(1,254), random.randint(1,254)), (0.2,-0.2))
+b = Body("planet", (centre[0], centre[1]/1.5), (random.randint(1,254), random.randint(1,254), random.randint(1,254)), (0.2,-0.2))
 planets = {a,b}
 
 print('Ship details:')
 print('pos: ', ship.position)
 print('velocity: ', ship.velocity)
 
+def unit_vector(vector):
+    magnitude = math.sqrt(vector[0]*vector[0]+vector[1]*vector[1])
+    return vector[0]/magnitude, vector[1]/magnitude
+
 def from_centre(x,y):
     return (centre[0]-x,centre[1]-y)
+
+def ship_polygon(pos, vel):
+    x = unit_vector(vel)
+    normal = unit_vector((math.pow(x[0],-1)*-1, math.pow(x[1],-1)*-1))
+    return (pos[0]+x[0]*20, pos[1]+x[1]*20.0),  (pos[0]+((-0.5*x[0])+normal[0])*20.0, pos[1]+((-0.5*x[1])+normal[1])*20.0), (pos[0]-((-0.5*x[0])-normal[0])*20.0, pos[1]-((-0.5*x[1])-normal[1])*20.0)
 
 def render():
     screen.fill((0, 0, 0))
 
+    #Draw planets
     pygame.draw.circle(screen, (255, 110, 0), centre, 65)
     for planet in planets:
         pygame.draw.circle(screen, planet.color, planet.position, 20)
-    pygame.draw.circle(screen, ship.color, ship.position, 20)
+    #Draw ship
+    polygon = ship_polygon(ship.position, ship.velocity)
+    pygame.draw.polygon(screen, ship.color, polygon, 0)
 
     #Fuel
     #Draw text
@@ -104,9 +116,8 @@ while True:
                 mouseDown = True
             mousePos = pygame.mouse.get_pos()
             vector = ship.position[0]-mousePos[0], ship.position[1]-mousePos[1]
-            magnitude = math.sqrt(vector[0]*vector[0]+vector[1]*vector[1])
-            unitVector = vector[0]//magnitude, vector[1]//magnitude
-            ship.velocity = ship.velocity[0]-unitVector[0]*0.2, ship.velocity[1]-unitVector[1]*0.2
+            x = unit_vector(vector)
+            ship.velocity = ship.velocity[0]-x[0]*0.2, ship.velocity[1]-x[1]*0.2
             ship.fuel -= 0.1
     #Ship updates
     distance = from_centre(ship.position[0], ship.position[1])
