@@ -58,10 +58,8 @@ def unit_vector(vector):
 def from_centre(x,y):
     return (centre[0]-x,centre[1]-y)
 
-def ship_polygon(pos, vel):
-    x = unit_vector(vel)
-    normal = unit_vector((math.pow(x[0],-1)*-1, math.pow(x[1],-1)*-1))
-    return (pos[0]+x[0]*20, pos[1]+x[1]*20.0),  (pos[0]+((-0.5*x[0])+normal[0])*20.0, pos[1]+((-0.5*x[1])+normal[1])*20.0), (pos[0]-((-0.5*x[0])-normal[0])*20.0, pos[1]-((-0.5*x[1])-normal[1])*20.0)
+def ship_polygon(pos):
+    return (pos[0], pos[1]+20.0),  (pos[0]+10, pos[1]), (pos[0]-10, pos[1])
 
 def render():
     screen.fill((0, 0, 0))
@@ -71,7 +69,7 @@ def render():
     for planet in planets:
         pygame.draw.circle(screen, planet.color, planet.position, 20)
     #Draw ship
-    polygon = ship_polygon(ship.position, ship.velocity)
+    polygon = ship_polygon(ship.position)
     pygame.draw.polygon(screen, ship.color, polygon, 0)
 
     #Fuel
