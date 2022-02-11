@@ -1,3 +1,4 @@
+from numpy import arcsin
 import pygame
 import math
 import random
@@ -58,8 +59,11 @@ def unit_vector(vector):
 def from_centre(x,y):
     return (centre[0]-x,centre[1]-y)
 
-def ship_polygon(pos):
-    return (pos[0], pos[1]+20.0),  (pos[0]+10, pos[1]), (pos[0]-10, pos[1])
+def ship_polygon(pos, vel):
+    u_vector = unit_vector(vel)
+    dx = u_vector[0]
+    dy = u_vector[1]
+    return (pos[0] + (dx*20), pos[1]+ (dy*20)),  (pos[0] + (dy*15), pos[1]- (dx*15)), (pos[0]- (dy*15), pos[1]+ (dx*15))
 
 def render():
     screen.fill((0, 0, 0))
@@ -69,7 +73,7 @@ def render():
     for planet in planets:
         pygame.draw.circle(screen, planet.color, planet.position, 20)
     #Draw ship
-    polygon = ship_polygon(ship.position)
+    polygon = ship_polygon(ship.position, ship.velocity)
     pygame.draw.polygon(screen, ship.color, polygon, 0)
 
     #Fuel
