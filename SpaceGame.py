@@ -19,7 +19,7 @@ sysfont = pygame.font.get_default_font()
 font = pygame.font.SysFont(None, 24)
 
 #Gravitational constant
-g = 0.0001
+g = 0.0002
 #Body object
 
 class Body:
@@ -44,8 +44,8 @@ class Ship:
 ship = Ship("ship", (50.0, 50.0), (255, 255, 255))
 
 #Planets
-a = Body("planet", (centre[0]/2, centre[1]), (random.randint(1,254), random.randint(1,254), random.randint(1,254)), (0.2,-0.2))
-b = Body("planet", (centre[0], centre[1]/1.5), (random.randint(1,254), random.randint(1,254), random.randint(1,254)), (0.2,-0.2))
+a = Body("planet", (random.randint(10,width-10), random.randint(10,height-10)), (random.randint(1,254), random.randint(1,254), random.randint(1,254)), (random.randint(0,3), random.randint(0,3)))
+b = Body("planet", (random.randint(10,width-10), random.randint(10,height-10)), (random.randint(1,254), random.randint(1,254), random.randint(1,254)), (random.randint(0,3), random.randint(0,3)))
 planets = {a,b}
 
 print('Ship details:')
