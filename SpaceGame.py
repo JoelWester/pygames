@@ -1,3 +1,4 @@
+from turtle import position
 from numpy import arcsin
 import pygame
 import math
@@ -43,9 +44,24 @@ class Ship:
 #Ship
 ship = Ship("ship", (50.0, 50.0), (255, 255, 255))
 
+#Bullets
+class Bullet:
+     mass = 0.5
+     def __init__(self, parent, position, color, velocity):
+        self.parent = parent
+        self.position = position
+        self.color = color
+        self.velocity = velocity
+
+bullets = []
+
 #Planets
-a = Body("planet", (random.randint(10,width-10), random.randint(10,height-10)), (random.randint(1,254), random.randint(1,254), random.randint(1,254)), (random.randint(0,3), random.randint(0,3)))
-b = Body("planet", (random.randint(10,width-10), random.randint(10,height-10)), (random.randint(1,254), random.randint(1,254), random.randint(1,254)), (random.randint(0,3), random.randint(0,3)))
+a = Body("planet", (random.randint(10,width-10), random.randint(10,height-10)),
+                    (random.randint(1,254), random.randint(1,254), random.randint(1,254)), 
+                    (random.randint(0,3), random.randint(0,3)))
+b = Body("planet", (random.randint(10,width-10), random.randint(10,height-10)), 
+                    (random.randint(1,254), random.randint(1,254), random.randint(1,254)), 
+                    (random.randint(0,3), random.randint(0,3)))
 planets = {a,b}
 
 print('Ship details:')
@@ -65,6 +81,11 @@ def ship_polygon(pos, vel):
     dy = u_vector[1]
     return (pos[0] + (dx*20), pos[1]+ (dy*20)),  (pos[0] + (dy*15), pos[1]- (dx*15)), (pos[0]- (dy*15), pos[1]+ (dx*15))
 
+def shoot(ship):
+    dx = ship.velocity[0]*1.1
+    dy = ship.velocity[1]*1.1
+    bullets.append(Bullet(ship,ship.position, ship.color, (dx, dy)))
+
 def render():
     screen.fill((0, 0, 0))
 
@@ -72,6 +93,9 @@ def render():
     pygame.draw.circle(screen, (255, 110, 0), centre, 65)
     for planet in planets:
         pygame.draw.circle(screen, planet.color, planet.position, 20)
+    #Draw bullets
+    for bullet in bullets:
+        pygame.draw.circle(screen, bullet.color, bullet.position, 2)
     #Draw ship
     polygon = ship_polygon(ship.position, ship.velocity)
     pygame.draw.polygon(screen, ship.color, polygon, 0)
@@ -97,6 +121,7 @@ while True:
         #Keyboard
         if event.type == pygame.QUIT or pygame.key.get_pressed()[pygame.K_q]:
             pygame.quit()
+        
         if pygame.key.get_pressed()[pygame.K_a] and ship.fuel > 0:
             ship.velocity = (ship.velocity[0]-0.2, ship.velocity[1])
             ship.fuel -= 0.1
@@ -109,6 +134,9 @@ while True:
         if pygame.key.get_pressed()[pygame.K_s] and ship.fuel > 0:
             ship.velocity = (ship.velocity[0], ship.velocity[1]+0.2)
             ship.fuel -= 0.1
+
+        if pygame.key.get_pressed()[pygame.K_SPACE]:
+            shoot(ship)
         #Mouse
         if event.type == pygame.MOUSEBUTTONUP:
             mouseDown = False
@@ -134,6 +162,10 @@ while True:
         gravity = (g*distance[0], g*distance[1])
         planet.velocity = (planet.velocity[0] + gravity[0], planet.velocity[1] + gravity[1])
         planet.position = (planet.position[0] + planet.velocity[0], planet.position[1] + planet.velocity[1])
+
+    #Bullet updates
+    for bullet in bullets:
+        bullet.position = (bullet.position[0]+bullet.velocity[0], bullet.position[1]+bullet.velocity[1])
 
     render()
     
