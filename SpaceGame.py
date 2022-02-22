@@ -113,9 +113,13 @@ def render():
 
 #Is the mouse pressed down?
 mouseDown = False
+#Shoot cooldown
+cooldown = 0
 
 while True:
     counter += 1
+    if(cooldown > 0):
+        cooldown = cooldown - 1
     #Input
     for event in pygame.event.get():
         #Keyboard
@@ -135,8 +139,9 @@ while True:
             ship.velocity = (ship.velocity[0], ship.velocity[1]+0.2)
             ship.fuel -= 0.1
 
-        if pygame.key.get_pressed()[pygame.K_SPACE]:
+        if pygame.key.get_pressed()[pygame.K_SPACE] and cooldown == 0:
             shoot(ship)
+            cooldown = 10
         #Mouse
         if event.type == pygame.MOUSEBUTTONUP:
             mouseDown = False
