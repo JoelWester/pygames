@@ -56,13 +56,22 @@ class Bullet:
 bullets = []
 
 #Planets
-a = Body("planet", (random.randint(10,width-10), random.randint(10,height-10)),
+#a = Body("planet", (random.randint(10,width-10), random.randint(10,height-10)),
+#                    (random.randint(1,254), random.randint(1,254), random.randint(1,254)), 
+#                    (random.randint(0,3), random.randint(0,3)))
+#b = Body("planet", (random.randint(10,width-10), random.randint(10,height-10)), 
+#                    (random.randint(1,254), random.randint(1,254), random.randint(1,254)), 
+#                    (random.randint(0,3), random.randint(0,3)))
+
+#PlanetGenerator
+def planet_generator():
+    return Body("planet", (random.randint(10,width-10), random.randint(10,height-10)),
                     (random.randint(1,254), random.randint(1,254), random.randint(1,254)), 
                     (random.randint(0,3), random.randint(0,3)))
-b = Body("planet", (random.randint(10,width-10), random.randint(10,height-10)), 
-                    (random.randint(1,254), random.randint(1,254), random.randint(1,254)), 
-                    (random.randint(0,3), random.randint(0,3)))
-planets = {a,b}
+planets = set()
+for n  in range(random.randint(1,6)):
+    planets.add(planet_generator())
+
 
 print('Ship details:')
 print('pos: ', ship.position)
